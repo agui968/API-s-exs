@@ -13,44 +13,12 @@ os.chdir(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-# sqlite3 advert.db #on terminal
-
-# def db_creation():
-#     df=pd.read_csv('data/Advertising.csv')
-#     connection = sqlite3.connect('data/Advertising.db')
-#     df.to_sql('advertising_db',connection,index=False,if_exists='replace')
-#     connection.close()
-
-# #cursor = connection.cursor()
-# cursor.execute(f"CREATE TABLE IF NOT EXISTS {Advertising} (TV INTEGER, radio REAL, newspaper REAL, sales REAL);")
-
 @app.route("/", methods=['GET'])
 def hello():
     return "Bienvenido a mi API del modelo advertising"
 
 # 1. Endpoint que devuelva la predicción de los nuevos datos enviados mediante argumentos en la llamada
 
-# @app.route('/v2/predict', methods=['GET'])
-# def predict():
-#     connection=sqlite3.connect('data/Advertising.db')
-#     curs=connection.cursor()
-#     curs.execute('SELECT * FROM Advertising')
-#     advertising = curs.fetchall()
-#     connection.close()
-#     model = pickle.load(open('data/advertising_model','rb'))
-
-#     tv = request.args.get('TV', None)
-#     radio = request.args.get('radio', None)
-#     newspaper = request.args.get('newspaper', None)
-
-#     if tv is None or radio is None or newspaper is None:
-#         return "Missing args, the input values are needed to predict"
-#     else:
-#         prediction = model.predict([[int(tv),int(radio),int(newspaper)]])
-#         return "The prediction of sales investing that amount of money in TV, radio and newspaper is: " + str(round(prediction[0],2)) + 'k €'
-
-
-# stv
 @app.route('/v2/predict', methods=['GET'])
 def predict_list():
     model = pickle.load(open('data/advertising_model','rb'))
@@ -65,20 +33,7 @@ def predict_list():
 
 
 #2
-# @app.route('/v2/ingest_data',methods=['POST'])
-# def ingest_data():
-#     data = request.get_json()
-    
-#     connection = sqlite3.connect('data/Advertising.db')
-#     curs=connection.cursor()
 
-#     curs.execute("INSERT INTO Advertising (TV, radio, newspaper, sales) VALUES (?, ?, ?,?)",
-#                  (data['TV'], data['radio'], data['newspaper'], data['sales']))
-#     connection.commit()
-#     connection.close()
-#     return 'Data updated'
-
-#stv
 @app.route('/v2/ingest_data', methods=['POST'])
 def add_data():
     data = request.get_json()
@@ -94,26 +49,8 @@ def add_data():
 
     return jsonify({'message': 'Updated data successfully'})
 
-
 #3
-# @app.route('/v2/retrain',methods=['POST'])
-# def retrain():
-#     connection = sqlite3.connect('data/Advertising.db')
-#     query="SELECT * FROM Advertising"
-#     df=pd.read_sql_query(query,connection)
-#     connection.close()
 
-#     X=df[['TV','radio','newspaper']]
-#     y=df['sales']
-
-#     model = pickle.load(open('data/advertising_model','rb'))
-
-#     model.fit(X,y)
-#     with open('data/advertising_model', 'wb') as file:
-#         pickle.dump(model, file)
-#     return "Model trained successfully"
-
-#stv
 @app.route('/v2/retrain', methods=['POST'])
 def retrain():
     conn = sqlite3.connect('data/Advertising.db')
@@ -132,6 +69,5 @@ def retrain():
     pickle.dump(model, open('advertising_model_2', 'wb'))
 
     return jsonify({'message': 'Model retrained correctly'})
-
 
 app.run()

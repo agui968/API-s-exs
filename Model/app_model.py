@@ -9,15 +9,15 @@ from sklearn.model_selection import train_test_split
 # from sklearn.linear_model import LinearRegression
 # from sklearn.metrics import mean_squared_error
 
-os.chdir(os.path.dirname(__file__))
+# os.chdir(os.path.dirname(__file__)) # da error en terminal
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
 @app.route("/", methods=['GET'])
 def hello():
-    return "Bienvenido a mi API del modelo advertising"
+    return "Welcome to my advertising model app"
 
-# 1. Endpoint que devuelva la predicción de los nuevos datos enviados mediante argumentos en la llamada
+# 1
 
 @app.route('/v2/predict', methods=['GET'])
 def predict_list():
@@ -29,7 +29,6 @@ def predict_list():
 
     prediction = model.predict([[tv, radio, newspaper]])
     return jsonify({'prediction': round(prediction[0], 2)})
-
 
 
 #2
@@ -70,4 +69,4 @@ def retrain():
 
     return jsonify({'message': 'Model retrained correctly'})
 
-app.run()
+app.run(host="0.0.0.0",port=5000)

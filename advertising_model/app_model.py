@@ -1,25 +1,23 @@
 from flask import Flask, request, jsonify
 import os
 import pickle
-# from sklearn.model_selection import cross_val_score
 import pandas as pd
 
 import sqlite3
-from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LinearRegression
-# from sklearn.metrics import mean_squared_error
 
 # os.chdir(os.path.dirname(__file__)) # da error en terminal
 app = Flask(__name__)
-app.config['DEBUG'] = True
+# app.config['DEBUG'] = True
+script_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_dir)
 
 @app.route("/", methods=['GET'])
 def hello():
-    return "Welcome to my advertising model app"
+    return "Bienvenid@ a mi app del modelo de advertising"
 
 # 1
 
-@app.route('/v2/predict', methods=['GET'])
+@app.route('/predict', methods=['GET'])
 def predict_list():
     model = pickle.load(open('data/advertising_model','rb'))
     data = request.get_json()   #{"data": [[100, 100, 200]]}
@@ -33,7 +31,7 @@ def predict_list():
 
 #2
 
-@app.route('/v2/ingest_data', methods=['POST'])
+@app.route('/ingest', methods=['POST'])
 def add_data():
     data = request.get_json()
 
@@ -46,11 +44,11 @@ def add_data():
         connection.commit()
         connection.close()
 
-    return jsonify({'message': 'Updated data successfully'})
+    return jsonify({'message': 'Datos ingresados correctamente'})
 
 #3
 
-@app.route('/v2/retrain', methods=['POST'])
+@app.route('/retrain', methods=['POST'])
 def retrain():
     conn = sqlite3.connect('data/Advertising.db')
     crsr = conn.cursor()
@@ -63,10 +61,11 @@ def retrain():
     model = pickle.load(open('data/advertising_model', 'rb'))
     X = df[["TV", "newspaper", "radio"]]
     y = df["sales"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=10)
-    model.fit(X_train, y_train)
-    pickle.dump(model, open('advertising_model_2', 'wb'))
+    model.fit(X, y)
+    pickle.dump(model, open('data/advertising_model_2', 'wb'))
 
-    return jsonify({'message': 'Model retrained correctly'})
+    return jsonify({'message': 'Modelo reentrenado correctamente.'})
 
-app.run(host="0.0.0.0",port=5000)
+# app.run(host="0.0.0.0",port=5000)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)

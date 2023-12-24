@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 import os
 import pickle
 import pandas as pd
-
 import sqlite3
 
 # os.chdir(os.path.dirname(__file__)) # da error en terminal
@@ -62,10 +61,9 @@ def retrain():
     X = df[["TV", "newspaper", "radio"]]
     y = df["sales"]
     model.fit(X, y)
-    pickle.dump(model, open('data/advertising_model_2', 'wb'))
+    pickle.dump(model, open('data/advertising_model', 'wb'))
 
     return jsonify({'message': 'Modelo reentrenado correctamente.'})
 
-# app.run(host="0.0.0.0",port=5000)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
